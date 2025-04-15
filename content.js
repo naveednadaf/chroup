@@ -338,36 +338,69 @@ function observeJobChanges() {
   const overlay = document.createElement('div');
   overlay.id = 'upwork-job-monitor-log-overlay';
   overlay.style.position = 'fixed';
-  overlay.style.top = '16px';
-  overlay.style.right = '16px';
-  overlay.style.width = '350px';
+  overlay.style.top = '24px';
+  overlay.style.right = '24px';
+  overlay.style.width = 'min(96vw, 370px)';
+  overlay.style.maxWidth = '98vw';
   overlay.style.maxHeight = '40vh';
   overlay.style.overflowY = 'auto';
   overlay.style.zIndex = '999999';
-  overlay.style.background = 'rgba(255,255,255,0.97)';
-  overlay.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
-  overlay.style.border = '1px solid #1976d2';
-  overlay.style.borderRadius = '8px';
-  overlay.style.fontFamily = 'monospace';
-  overlay.style.fontSize = '13px';
-  overlay.style.padding = '10px 10px 10px 14px';
+  overlay.style.background = '#f3f6fa'; // subtle light background
+  overlay.style.backdropFilter = '';
+  overlay.style.boxShadow = '0 8px 32px 0 rgba(31,38,135,0.12), 0 1.5px 5px 0 rgba(25, 118, 210, 0.08)';
+  overlay.style.border = 'none';
+  overlay.style.borderRadius = '16px';
+  overlay.style.fontFamily = 'system-ui,Segoe UI,Roboto,sans-serif';
+  overlay.style.fontSize = '14px';
+  overlay.style.padding = '18px 16px 14px 14px';
   overlay.style.display = 'flex';
   overlay.style.flexDirection = 'column-reverse';
-  overlay.style.gap = '6px';
+  overlay.style.gap = '10px';
   overlay.style.pointerEvents = 'none';
   overlay.style.transition = 'opacity 0.5s';
   overlay.style.opacity = '1';
 
   document.body.appendChild(overlay);
 
-  // Add CSS for log types
+  // Add CSS for log types with solid fill backgrounds and white text
   const style = document.createElement('style');
   style.textContent = `
-    #upwork-job-monitor-log-overlay .log-entry.info { color: #1976d2; }
-    #upwork-job-monitor-log-overlay .log-entry.success { color: #388e3c; }
-    #upwork-job-monitor-log-overlay .log-entry.warning { color: #ff9800; }
-    #upwork-job-monitor-log-overlay .log-entry.error { color: #d32f2f; font-weight: bold; }
-    #upwork-job-monitor-log-overlay .log-entry { margin-bottom: 2px; word-break: break-word; }
+    #upwork-job-monitor-log-overlay .log-entry {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      border-radius: 8px;
+      background: #1976d2; /* default info */
+      margin-bottom: 0;
+      padding: 8px 16px 8px 12px;
+      position: relative;
+      min-height: 32px;
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+      color: #fff;
+      font-weight: 500;
+      box-shadow: 0 1px 4px rgba(25,118,210,0.07);
+      border-left: none;
+      animation: fadeIn 0.5s;
+    }
+    #upwork-job-monitor-log-overlay .log-entry.info    { background: #1976d2; color: #fff; }
+    #upwork-job-monitor-log-overlay .log-entry.success { background: #388e3c; color: #fff; }
+    #upwork-job-monitor-log-overlay .log-entry.warning { background: #f9a825; color: #fff; }
+    #upwork-job-monitor-log-overlay .log-entry.error   { background: #d32f2f; color: #fff; font-weight: bold; }
+    #upwork-job-monitor-log-overlay .log-entry .log-time {
+      flex-shrink: 0;
+      font-size: 12px;
+      color: #e3e3e3;
+      margin-right: 10px;
+      margin-top: 2px;
+      font-family: monospace;
+      opacity: 0.8;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   `;
   document.head.appendChild(style);
 
@@ -375,7 +408,7 @@ function observeJobChanges() {
   const initEntry = document.createElement('div');
   initEntry.className = 'log-entry info';
   const timestamp = new Date().toLocaleTimeString();
-  initEntry.textContent = `${timestamp}: Overlay initialized (v1.0)`;
+  initEntry.innerHTML = `<span class="log-time">${timestamp}</span> Overlay initialized (v1.0)`;
   overlay.appendChild(initEntry);
 
   // Overlay auto-hide logic
@@ -401,7 +434,7 @@ function observeJobChanges() {
     if (msg && msg.type === 'OVERLAY_LOG') {
       const entry = document.createElement('div');
       entry.className = `log-entry ${msg.logType || 'info'}`;
-      entry.textContent = `${new Date().toLocaleTimeString()}: ${msg.message}`;
+      entry.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> ${msg.message}`;
       overlay.appendChild(entry);
       // Limit to last 50 entries
       while (overlay.children.length > 50) overlay.removeChild(overlay.firstChild);
