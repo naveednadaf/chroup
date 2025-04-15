@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Upwork Job Monitor",
+  "version": "1.0",
+  "description": "Monitor Upwork jobs and receive notifications",
+  "permissions": [
+    "storage",
+    "tabs",
+    "alarms",
+    "notifications",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.upwork.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.upwork.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [{
+    "resources": ["notification.mp3"],
+    "matches": ["<all_urls>"]
+  }],
+  "options_page": "options.html"
+}

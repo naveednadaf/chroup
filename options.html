@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upwork Job Monitor Settings</title>
+  <style>
+    /* Keep all existing styles */
+    body {
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="url"], input[type="time"], input[type="number"], select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .time-inputs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .time-inputs div {
+      flex: 1;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #005599;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .status.success {
+      background-color: #e6ffe6;
+      color: #006600;
+      border: 1px solid #b3ffb3;
+    }
+    .status.error {
+      background-color: #ffe6e6;
+      color: #660000;
+      border: 1px solid #ffb3b3;
+    }
+    .test-result {
+      margin-top: 10px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      display: none;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .current-schedule {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+    .warning {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 4px;
+      color: #856404;
+    }
+    .help-text {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+    /* Add new log styles */
+    .log-container {
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 10px;
+    }
+    .log-entry {
+      margin: 2px 0;
+      padding: 2px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .log-entry.error { color: #dc3545; }
+    .log-entry.success { color: #28a745; }
+    .log-entry.info { color: #17a2b8; }
+  </style>
+</head>
+<body>
+  <h1>Upwork Job Monitor Settings</h1>
+  
+  <div class="section">
+    <h2>API Configuration</h2>
+    <div>
+      <label for="apiEndpoint">API Endpoint URL:</label>
+      <div class="help-text">
+        Enter the webhook URL or API endpoint that will receive job notifications.
+        The endpoint must accept POST requests with JSON payloads.
+      </div>
+      <input type="url" id="apiEndpoint" placeholder="https://your-webhook-url.com/endpoint">
+      <div>
+        <button id="saveEndpoint">Save Endpoint</button>
+        <button id="testEndpoint">Test Endpoint</button>
+      </div>
+      <div id="endpointStatus" class="status"></div>
+      <div id="testResult" class="test-result"></div>
+      <!-- Add log container -->
+      <div class="log-container" id="logContainer"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Schedule Configuration</h2>
+    <div>
+      <label for="timezone">Time Zone:</label>
+      <select id="timezone">
+        <option value="Asia/Kolkata">India Standard Time (IST)</option>
+        <!-- Add more time zones as needed -->
+      </select>
+
+      <div class="time-inputs">
+        <div>
+          <label for="inactiveStart">Inactive Period Start:</label>
+          <input type="time" id="inactiveStart" value="13:00">
+        </div>
+        <div>
+          <label for="inactiveEnd">Inactive Period End:</label>
+          <input type="time" id="inactiveEnd" value="23:00">
+        </div>
+      </div>
+
+      <button id="saveSchedule">Save Schedule</button>
+      <div id="scheduleStatus" class="status"></div>
+      
+      <div class="current-schedule" id="currentSchedule">
+        Loading current schedule...
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Stealth Settings</h2>
+    <div>
+      <label for="minRefreshInterval">Minimum Refresh Interval (minutes):</label>
+      <input type="number" id="minRefreshInterval" min="4" max="7" value="4">
+      
+      <label for="maxRefreshInterval">Maximum Refresh Interval (minutes):</label>
+      <input type="number" id="maxRefreshInterval" min="4" max="7" value="7">
+      
+      <label for="preRefreshDelay">Pre-refresh Random Delay (seconds):</label>
+      <input type="number" id="preRefreshDelay" min="0" max="30" value="5">
+      
+      <div class="help-text">
+        These settings help make the monitoring behavior less predictable and more human-like.
+        Keep the refresh interval between 4-7 minutes to avoid detection.
+      </div>
+      
+      <button id="saveStealthSettings">Save Stealth Settings</button>
+      <div id="stealthStatus" class="status"></div>
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>Important Notice:</strong>
+    <p>This tool automates interactions with Upwork's website, which may violate their Terms of Service. 
+    Use at your own risk. The tool relies on specific HTML structures that may change without notice, 
+    potentially breaking functionality.</p>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

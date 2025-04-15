@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upwork Job Monitor</title>
+  <style>
+    body {
+      width: 350px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+    }
+    h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+    }
+    .status.active {
+      background-color: #e6ffe6;
+      color: #006600;
+    }
+    .status.inactive {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .status.error {
+      background-color: #ffe6e6;
+      color: #660000;
+    }
+    .status a {
+      color: #0077cc;
+      text-decoration: none;
+      margin-left: 5px;
+    }
+    .status a:hover {
+      text-decoration: underline;
+    }
+    .schedule-info {
+      margin-top: 5px;
+      font-size: 0.9em;
+      color: #666;
+    }
+    button {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 4px;
+      background-color: #0077cc;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #005599;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .log {
+      margin-top: 15px;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      background-color: #f9f9f9;
+    }
+    .log div {
+      margin: 2px 0;
+      padding: 2px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .log div:last-child {
+      border-bottom: none;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .controls button {
+      flex: 1;
+    }
+    .warning {
+      margin-top: 10px;
+      padding: 8px;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #856404;
+    }
+    .refresh-info {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    .refresh-info .countdown {
+      font-weight: bold;
+      color: #0077cc;
+    }
+    .refresh-controls {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .refresh-controls button {
+      flex: 1;
+      font-size: 12px;
+      padding: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Upwork Job Monitor</h2>
+  <div class="section">
+    <label for="monitorUrl">URL to Monitor:</label>
+    <input type="url" id="monitorUrl" placeholder="https://www.upwork.com/nx/search/jobs/..." style="width: 100%; margin-bottom: 10px;">
+  </div>
+
+  <div id="status" class="status">
+    Checking status...
+  </div>
+  
+  <div class="refresh-info" id="refreshInfo">
+    <div>Auto-refresh: <span id="refreshStatus">Disabled</span></div>
+    <div>Next refresh in: <span id="countdown" class="countdown">--:--</span></div>
+  </div>
+
+  <div class="refresh-controls">
+    <button id="toggleAutoRefresh" disabled>Enable Auto-refresh</button>
+    <button id="refreshNow" disabled>Refresh Now</button>
+  </div>
+  
+  <div class="controls">
+    <button id="toggleMonitor">Start Monitoring</button>
+  </div>
+  
+  <div class="log" id="log">
+    <div>Monitoring log will appear here...</div>
+  </div>
+
+  <button id="openSettings">Settings</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>
